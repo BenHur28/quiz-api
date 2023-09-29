@@ -25,12 +25,7 @@ namespace quiz_api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Question>>> GetQuestions()
         {
-          if (_context.Questions == null)
-          {
-              return NotFound();
-          }
-
-            var random5Qs = await (_context.Questions)
+            var random5Qs = await (_context.Questions
                  .Select(x => new
                  {
                      QnId = x.QnId,
@@ -42,7 +37,7 @@ namespace quiz_api.Controllers
                      }
                  })
                  .OrderBy(y => Guid.NewGuid())
-                 .Take(5)
+                 .Take(5))
                  .ToListAsync();
 
             return Ok(random5Qs);
