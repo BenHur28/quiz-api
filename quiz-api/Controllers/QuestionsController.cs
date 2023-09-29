@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using quiz_api.Models;
 
 namespace quiz_api.Controllers
@@ -28,7 +29,23 @@ namespace quiz_api.Controllers
           {
               return NotFound();
           }
-            return await _context.Questions.ToListAsync();
+
+            var random5Qs = await (_context.Questions)
+                 .Select(x => new
+                 {
+                     QnId = x.QnId,
+                     QnInWords = x.QnInWords,
+                     Image = x.ImageName,
+                     Options = new string[]
+                     {
+                        x.Option1, x.Option2, x.Option3, x.Option4
+                     }
+                 })
+                 .OrderBy(y => Guid.NewGuid())
+                 .Take(5)
+                 .ToListAsync();
+
+            return Ok(random5Qs);
         }
 
         // GET: api/Questions/5
